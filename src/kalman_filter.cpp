@@ -61,15 +61,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   double rho = sqrt(px*px + py*py);
   double theta = atan2(py, px);
-  double rho_dot = (px*vx + py*vy) / rho;
+  double rho_dot = (px*vx + py*vy) / std::max(0.1,rho);
   VectorXd h = VectorXd(3);
   h << rho, theta, rho_dot;
   VectorXd y = z - h;
   while ( y(1) > M_PI || y(1) < -M_PI ) {
     if ( y(1) > M_PI ) {
-      y(1) -= M_PI;
+      y(1) -= 2*M_PI;
     } else {
-      y(1) += M_PI;
+      y(1) += 2*M_PI;
     }
   }
   MatrixXd Ht = H_.transpose();
